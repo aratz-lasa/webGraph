@@ -1,0 +1,8 @@
+-i https://pypi.org/simple
+async-generator==1.10
+attrs==18.2.0
+idna==2.8
+outcome==1.0.0
+sniffio==1.0.0
+sortedcontainers==2.1.0
+trio==0.10.0
