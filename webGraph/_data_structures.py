@@ -12,4 +12,4 @@ class WebPage():
 class HTTPResponse():
     code = attr.ib(default=None)
     headers = attr.ib(default=None)
-    html = attr.ib(default=None)
+    data = attr.ib(default=None)

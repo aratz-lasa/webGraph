@@ -24,6 +24,9 @@ def start_server():
     sleep(1) # Give time for starting server
 
 
+
+
+
 def test_connect(start_server):
     async def open_http_connection():
         async with open_http_socket(host, int(port), ssl=False) as http_socket:
@@ -35,7 +38,7 @@ def test_http_response(start_server):
         async with open_http_socket(host, int(port), ssl=False) as http_socket:
             response = await http_socket.request(path=path)
             assert type(response) is HTTPResponse
-            assert response.html == html
+            assert response.data == html
             assert response.code == "200"
     trio.run(open_http_connection)
 

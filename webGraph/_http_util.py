@@ -1,5 +1,3 @@
-from urllib.parse import urlsplit
-import urllib
 from trio import open_ssl_over_tcp_stream, open_tcp_stream
 from ._data_structures import HTTPResponse
 from contextlib import asynccontextmanager
@@ -137,11 +135,10 @@ class HTTPConnection:
         self.buffer_in = ""
 
     async def read_response(self):
+        self.buffer_in = await self.sock.receive_some(self.blocksize)
         if self.response_state == READING_HEADERS:
-            self.buffer_in = await self.sock.receive_some(self.blocksize)
             self.parse_set_headers_and_code()
         if self.response_state == READING_DATA:
-            self.buffer_in = await self.sock.receive_some(int(self.response.headers["Content-Length"]) - len(self.buffer_in))
             self.parse_set_data()
 
     def parse_set_headers_and_code(self):
