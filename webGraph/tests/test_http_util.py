@@ -1,6 +1,6 @@
 import trio
-from .._http_util import *
-from .flask_test_server import start_server_thread, host, port, path, ssl, html, status, status_version
+from ..utils._http_util import *
+from .flask_test_server import *
 
 
 

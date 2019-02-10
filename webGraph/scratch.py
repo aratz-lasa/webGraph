@@ -1,9 +1,5 @@
 import trio
-import urllib
-import _http_util as http
-
-
-
+from utils import _http_util as http
 
 if __name__ == "__main__":
     webpage = "trio.readthedocs.io"

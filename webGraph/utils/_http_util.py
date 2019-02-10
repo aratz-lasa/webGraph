@@ -40,8 +40,10 @@ class HTTPConnection:
     path = "/"
     http_version = 'HTTP/1.1'
     encoding = "utf-8"
+    port = 80
+    ssl_port = 443
 
-    def __init__(self, host, port=443, timeout=5,
+    def __init__(self, host, port=ssl_port, timeout=5,
                  source_address=None, blocksize=8192):
         self.timeout = timeout
         self.source_address = source_address
@@ -61,7 +63,10 @@ class HTTPConnection:
         if self.sock:
             await self.close()
         if port is None:
-            port = self.port
+            if ssl:
+                port = self.ssl_port
+            else:
+                port = self.port
 
         if ssl:
             self.sock = await open_ssl_over_tcp_stream(host, port, https_compatible=True)

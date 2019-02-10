@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup as bs
-from .._crawler_util import CrawlerUtil
-from .._data_structures import WebPage
+from ..utils._crawler_util import CrawlerUtil
+from ..utils._data_structures import WebPage
 from .flask_test_server import *
 
 

@@ -1,13 +1,15 @@
 import trio
-from .._crawler import crawler
+
 from .flask_test_server import *
-from ..utils._data_structures import WebPage
+from .._downloader import downloader
+from .._crawler import crawler
+from ..utils._data_structures import WebPage, HTTPRequest
 
 def test_downloader(start_server_thread):
-    trio.run(run_async_test_downloader)
+    trio.run(run_async_test_downloader_crawler)
 
 
-async def run_async_test_downloader():
+async def run_async_test_downloader_crawler():
     timeout = 5
     # open timeout
     with trio.move_on_after(timeout) as cancel:
@@ -18,13 +20,16 @@ async def run_async_test_downloader():
             q1_write, q1_read = trio.open_memory_channel(0)
             # create queue2
             q2_write, q2_read = trio.open_memory_channel(0)
+            # create queue3
+            q3_write, q3_read = trio.open_memory_channel(0)
             # start downloader fun
-            nursery.start_soon(crawler, q1_read, q2_write)
+            nursery.start_soon(downloader, q1_read, q2_write)
+            nursery.start_soon(crawler, q2_read, q3_write)
             # write HTTPRequest to queue1
-            web_page = WebPage(host=host, path=path, html=html)
-            await q1_write.send(web_page)
-            # read response from
-            web_page = await q2_read.receive()
+            request = HTTPRequest(host=host, port=port, path=path, ssl=ssl)
+            await q1_write.send(request)
+            # read WebPage from q3_read
+            web_page = await q3_read.receive()
             timeout = False
             cancel.cancel()
 
@@ -35,4 +40,3 @@ async def run_async_test_downloader():
     assert web_page.path == path
     assert web_page.links
     assert set(web_page.links) == set(absolute_urls)
-

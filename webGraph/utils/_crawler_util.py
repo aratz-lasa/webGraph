@@ -16,6 +16,7 @@ class CrawlerUtil:
         self.create_soup()
         self.analyze_soup()
         self.put_urls_to_web_page_related_links()
+        self.reset()
 
     def create_soup(self):
         self.soup = bs(self.web_page.html, 'html.parser')
@@ -35,3 +36,9 @@ class CrawlerUtil:
         for url in self.buffer_urls:
             if re.match(HTTP_URL_REGEX, url):
                 self.absolute_urls.append(url)
+
+    def reset(self):
+        self.absolute_urls.clear()
+        self.buffer_urls.clear()
+        self.web_page = None
+        self.soup = None

@@ -1,7 +1,7 @@
 import re
 
-from ._http_util import open_http_socket, HTTP_OK_STATUS_REGEX
-from ._data_structures import WebPage
+from .utils._http_util import open_http_socket, HTTP_OK_STATUS_REGEX
+from .utils._data_structures import WebPage
 
 
 async def downloader(read_queue, write_queue):

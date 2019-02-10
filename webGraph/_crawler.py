@@ -1,4 +1,4 @@
-from ._crawler_util import CrawlerUtil
+from .utils._crawler_util import CrawlerUtil
 
 
 async def crawler(read_queue, write_queue):
@@ -7,5 +7,3 @@ async def crawler(read_queue, write_queue):
         async for web_page in read_queue:
             crawler_util.fill_links(web_page)
             await write_queue.send(web_page)
-
-
