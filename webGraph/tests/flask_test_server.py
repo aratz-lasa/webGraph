@@ -7,8 +7,20 @@ host = "127.0.0.1"
 port = 5000
 path = "/"
 ssl = False
-html = "Hello"
+html = """
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>HTML Links</h2>
+<p>HTML links are defined with the a tag:</p>
+
+<a href="https://www.w3schools.com">This is a link</a>
+
+</body>
+</html>"""
 status = "200"
+status_version = "HTTP/1.0 " + status + " OK"
 
 server_thread = None
 app = Flask(__name__)

@@ -33,4 +33,4 @@ async def run_async_test_downloader():
     assert web_page.html == html
     assert web_page.host == host
     assert web_page.path == path
-    assert not web_page.related_urls
+    assert not web_page.links
