@@ -132,10 +132,10 @@ class HTTPConnection:
     def initialize_response_receival(self):
         self.response = HTTPResponse()
         self.response_state = READING_HEADERS
-        self.buffer_in = ""
+        self.buffer_in = b""
 
     async def read_response(self):
-        self.buffer_in = await self.sock.receive_some(self.blocksize)
+        self.buffer_in = b"".join((self.buffer_in, await self.sock.receive_some(self.blocksize)))
         if self.response_state == READING_HEADERS:
             self.parse_set_headers_and_code()
         if self.response_state == READING_DATA:
@@ -149,7 +149,7 @@ class HTTPConnection:
         code, headers = code_headers.split(HTTP_ONE_BLANK_LINE, 1)
         self.parse_set_code(code)
         self.parse_set_headers(headers)
-        new_start = len(code_headers) + len(HTTP_TWO_BLANK_LINES) - 1
+        new_start = len(code_headers) + len(HTTP_TWO_BLANK_LINES)
         self.buffer_in = self.buffer_in[new_start:]
         self.response_state = READING_DATA
 
