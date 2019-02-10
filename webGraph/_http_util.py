@@ -5,8 +5,12 @@ from contextlib import asynccontextmanager
 import re
 
 
-# General constants
+
+# regex patterns
 HTTP_OK_STATUS_REGEX = "2.."
+HTTP_URL_REGEX = "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+
+# General constants
 HTTP_ONE_BLANK_LINE = "\r\n"
 HTTP_TWO_BLANK_LINES = HTTP_ONE_BLANK_LINE * 2
 CONTENT_LENGTH_HEADER = "Content-Length"

@@ -5,7 +5,7 @@ class WebPage:
     host = attr.ib(default=None)
     path = attr.ib(default=None)
     html = attr.ib(default=None)
-    related_urls = attr.ib(default=attr.Factory(list))
+    links = attr.ib(default=attr.Factory(list))
 
 
 @attr.s(cmp=False, hash=False, repr=False)
