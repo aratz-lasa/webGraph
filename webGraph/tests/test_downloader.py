@@ -1,8 +1,7 @@
 import trio
-from _downloader import downloader
-from .flask_test_server import start_server_thread, host, port, path, html
-from .._http_util import *
-
+from .._downloader import downloader
+from .flask_test_server import start_server_thread, host, port, path, html, ssl
+from .._data_structures import WebPage, HTTPRequest
 
 def test_downloader(start_server_thread):
     trio.run(run_async_test_downloader)
@@ -11,35 +10,27 @@ def test_downloader(start_server_thread):
 async def run_async_test_downloader():
     timeout = 5
     # open timeout
-    with trio.move_on_after(timeout):
+    with trio.move_on_after(timeout) as cancel:
         timeout = True
         # open nursery
-        with trio.open_nursery() as nursery:
+        async with trio.open_nursery() as nursery:
             # create queue1
             q1_write, q1_read = trio.open_memory_channel(0)
             # create queue2
             q2_write, q2_read = trio.open_memory_channel(0)
             # start downloader fun
-            nursery.start_soon(downloader_fun, q1_read, q2_write)
-            # write url to queue1
-            await q1_write.send_channel.send(host)
+            nursery.start_soon(downloader, q1_read, q2_write)
+            # write HTTPRequest to queue1
+            request = HTTPRequest(host=host, port=port, path=path, ssl=ssl)
+            await q1_write.send(request)
             # read response from
-            response = await q2_read.receive()
+            web_page = await q2_read.receive()
             timeout = False
+            cancel.cancel()
 
-        assert not timeout
-        assert type(response) is HTTPResponse
-        assert response.data == html
-        assert response.code == "200"
-        assert response.data == html
-
-
-async def producer(send_channel):
-    # Producer sends 3 messages
-    for i in range(3):
-        # The producer sends using 'await send_channel.send(...)'
-
-async def downloader_fun(receive_channel, write_channel):
-    # The consumer uses an 'async for' loop to receive the values:
-    url = await receive_channel.receive()
-    downloader()
+    assert not timeout
+    assert type(web_page) is WebPage
+    assert web_page.html == html
+    assert web_page.host == host
+    assert web_page.path == path
+    assert not web_page.related_urls

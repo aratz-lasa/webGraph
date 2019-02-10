@@ -4,9 +4,12 @@ from flask import Flask, make_response
 from time import sleep
 
 host = "127.0.0.1"
-port = "5000"
+port = 5000
 path = "/"
+ssl = False
 html = "Hello"
+status = "200"
+
 server_thread = None
 app = Flask(__name__)
 
@@ -20,7 +23,7 @@ def setup_handler(path, html):
 
 def run_test_server(host, port, path, html):
     setup_handler(path, html)
-    app.run(host, int(port))
+    app.run(host, port)
 
 
 @pytest.fixture

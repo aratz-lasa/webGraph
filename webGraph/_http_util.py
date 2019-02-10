@@ -1,5 +1,6 @@
 from trio import open_ssl_over_tcp_stream, open_tcp_stream
 from ._data_structures import HTTPResponse
+from ._exceptions import *
 from contextlib import asynccontextmanager
 import re
 
@@ -8,6 +9,7 @@ import re
 HTTP_OK_STATUS_REGEX = "2.."
 HTTP_ONE_BLANK_LINE = "\r\n"
 HTTP_TWO_BLANK_LINES = HTTP_ONE_BLANK_LINE * 2
+CONTENT_LENGTH_HEADER = "Content-Length"
 
 # Response fields
 STATUS_CODE = 0
@@ -35,7 +37,7 @@ class HTTPConnection:
     http_version = 'HTTP/1.1'
     encoding = "utf-8"
 
-    def __init__(self, host=None, port=443, timeout=5,
+    def __init__(self, host, port=443, timeout=5,
                  source_address=None, blocksize=8192):
         self.timeout = timeout
         self.source_address = source_address
@@ -47,7 +49,7 @@ class HTTPConnection:
         self.response_state = READING_HEADERS
         self.__response = None
         self._method = None
-
+        assert host is not None
         self.host = host
         self.port = port
 
@@ -135,43 +137,60 @@ class HTTPConnection:
         self.buffer_in = b""
 
     async def read_response(self):
-        self.buffer_in = b"".join((self.buffer_in, await self.sock.receive_some(self.blocksize)))
+        await self.fill_buffer()
+        self.parse_response()
+
+    def parse_response(self):
         if self.response_state == READING_HEADERS:
             self.parse_set_headers_and_code()
         if self.response_state == READING_DATA:
             self.parse_set_data()
 
+    async def fill_buffer(self):
+        self.buffer_in = b"".join((self.buffer_in, await self.sock.receive_some(self.blocksize)))
+
     def parse_set_headers_and_code(self):
         buffer_in = self.buffer_in.decode(self.encoding)
         if not re.search(HTTP_TWO_BLANK_LINES, buffer_in):
             return
-        code_headers, data = buffer_in.split(HTTP_TWO_BLANK_LINES)
-        code, headers = code_headers.split(HTTP_ONE_BLANK_LINE, 1)
+        code, headers, data= self.split_code_headers_data(buffer_in)
         self.parse_set_code(code)
         self.parse_set_headers(headers)
-        new_start = len(code_headers) + len(HTTP_TWO_BLANK_LINES)
+        new_start = len(code+HTTP_ONE_BLANK_LINE+headers) + len(HTTP_TWO_BLANK_LINES)
         self.buffer_in = self.buffer_in[new_start:]
         self.response_state = READING_DATA
 
+    def split_code_headers_data(self, buffer_in):
+        code_headers, data = buffer_in.split(HTTP_TWO_BLANK_LINES)
+        if re.search(HTTP_ONE_BLANK_LINE, code_headers):
+            code, headers = code_headers.split(HTTP_ONE_BLANK_LINE, 1)
+        else:
+            code = code_headers
+            headers = ""
+        return code, headers, data
+
     def parse_set_data(self):
+        if self.response_state == READING_HEADERS:
+            raise HttpResponseParsingError("Tried parsing data while reading headers")
         buffer_in = self.buffer_in
-        content_length = int(self.response.headers["Content-Length"])
+        content_length = int(self.response.headers[CONTENT_LENGTH_HEADER])
         if len(buffer_in) < content_length:
             return
         self.response.data = self.buffer_in[:content_length].decode(self.encoding)
         self.response_state = DONE
 
     def parse_set_headers(self, raw_headers):
-        raw_headers = raw_headers.split(HTTP_ONE_BLANK_LINE)
+        raw_headers = filter(None,raw_headers.split(HTTP_ONE_BLANK_LINE))
         headers = {}
         for raw_header in raw_headers:
             key, value = raw_header.split(':', 1)  # split each line by http field name and value
             headers[key] = value
+        if CONTENT_LENGTH_HEADER not in headers.keys():
+            headers[CONTENT_LENGTH_HEADER] = "0"
         self.response.headers = headers
 
     def parse_set_code(self, code):
         self.response.code = code.split(" ")[1]  # extract code from HTTP/1.1 302 FOUND --> 302
-
 
 @asynccontextmanager
 async def open_http_socket(host, port=None, ssl=True):
