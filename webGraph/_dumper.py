@@ -1,11 +1,11 @@
-from .utils._graph_util import GraphDB
+from .utils._db import DB
 
 async def dumper(read_queue, write_queue):
-    graph = GraphDB()
+    db = DB()
     async with read_queue, write_queue:
         async for web_page in read_queue:
                 # save in graph db
-                graph.dump_links(web_page)
+                db.dump_links(web_page)
                 # check if related links have been studied
                 # create http_request's from un-studied links
                 # write http_request's to write_queue

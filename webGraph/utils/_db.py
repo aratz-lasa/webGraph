@@ -5,10 +5,8 @@ class DB:
     key_value_store = None
 
     def __init__(self):
-        if self.graph is None:
-            self.init_graph()
-        if self.key_value_store is None:
-            self.init_key_value_store()
+        self.init_graph()
+        self.init_key_value_store()
 
     def init_graph(self):
         self.graph = GraphDB()
