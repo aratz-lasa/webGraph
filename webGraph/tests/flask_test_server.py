@@ -3,6 +3,7 @@ import pytest
 from flask import Flask, make_response
 from time import sleep
 
+# data to know where to contact flask server
 host = "127.0.0.1"
 port = 5000
 path = "/"
@@ -16,34 +17,37 @@ html = """
 <p>HTML links are defined with the a tag:</p>
 
 <a href="https://www.w3schools.com">This is a link</a>
+<a href="www.w3schools.com">This is a link</a>
+<a href="https://www.google.com">This is a link</a>
+<a href="www.google.com">This is a link</a>
 
 </body>
 </html>"""
 status = "200"
 status_version = "HTTP/1.0 " + status + " OK"
 
-server_thread = None
-app = Flask(__name__)
+# urls in the html
+incorrect_urls = ["www.google.com", "www.w3schools.com"]
+absolute_urls = ["https://www.google.com", "https://www.w3schools.com"]
+urls = absolute_urls + incorrect_urls
 
 
-def setup_handler(path, html):
-    @app.route(path)
-    def handle():
-        response = make_response(html)
-        return response, 200
+_server_thread = None
+_app = Flask(__name__)
 
 
-def run_test_server(host, port, path, html):
-    setup_handler(path, html)
-    app.run(host, port)
+@_app.route(path)
+def _handle():
+    response = make_response(html)
+    return response, 200
 
 
 @pytest.fixture
 def start_server_thread():
-    global server_thread
-    if not server_thread:
-        server_thread = threading.Thread(target=run_test_server, args=(host, port, path, html), daemon=True)
-        server_thread.start()
+    global _server_thread
+    if not _server_thread:
+        _server_thread = threading.Thread(target=_app.run, args=(host, port), daemon=True)
+        _server_thread.start()
     sleep(1) # Give time for starting server
 
 
