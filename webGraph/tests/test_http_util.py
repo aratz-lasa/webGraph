@@ -46,7 +46,7 @@ def test_parse_status_headers(start_server_thread):
     assert connection.response
     assert connection.response.headers != headers_dictionary
     assert connection.response.code == status_version.split(" ")[1]
-    assert connection.response.data != data
+    assert connection.response.data == ""
 
 
 def prepare_connection(connection, **args):
