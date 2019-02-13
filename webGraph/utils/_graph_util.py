@@ -1,7 +1,13 @@
 from contextlib import contextmanager
 from neo4j import GraphDatabase
+import os
 
 from ._data_structures import get_name_from_host
+from ..settings import settings
+
+GRAPH_USER = os.getenv("NEO4J_USER")
+GRAPH_PASSWORD = os.getenv("NEO4J_PASSWORD")
+GRAPH_URL = os.getenv("NEO4J_URL")
 
 
 class GraphDB:
@@ -10,7 +16,7 @@ class GraphDB:
         self.init_db()
 
     def init_db(self):
-        self._driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "neo4j"))
+        self._driver = GraphDatabase.driver(GRAPH_URL, auth=(GRAPH_USER, GRAPH_PASSWORD))
         # read from .env file the environment settings for neo4j
         # connect to neo4j
 
@@ -75,6 +81,7 @@ class GraphDB:
 
     def __del__(self):
         self.close()
+
 
 @contextmanager
 def open_graph():
