@@ -1,4 +1,4 @@
-from ._graph_util import GraphDB
+from ._graph import GraphDB
 
 class DB:
     graph = None

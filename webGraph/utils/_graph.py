@@ -3,7 +3,7 @@ from neo4j import GraphDatabase
 import os
 
 from ._data_structures import get_name_from_host
-from ..settings import settings
+from ..settings import settings # used for executing load_dotenv()
 
 GRAPH_USER = os.getenv("NEO4J_USER")
 GRAPH_PASSWORD = os.getenv("NEO4J_PASSWORD")
