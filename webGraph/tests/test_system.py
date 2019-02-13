@@ -13,7 +13,7 @@ async def run_async_test_downloader_crawler():
     timeout = 5
     # open timeout
     with trio.move_on_after(timeout) as cancel:
-        timeout = True
+        exited = True
         # open nursery
         async with trio.open_nursery() as nursery:
             # create queue1
@@ -30,10 +30,10 @@ async def run_async_test_downloader_crawler():
             await q1_write.send(request)
             # read WebPage from q3_read
             web_page = await q3_read.receive()
-            timeout = False
+            exited = False
             cancel.cancel()
 
-    assert not timeout
+    assert not exited
     assert type(web_page) is WebPage
     assert web_page.html == html
     assert web_page.host == host

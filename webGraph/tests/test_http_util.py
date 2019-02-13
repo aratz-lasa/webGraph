@@ -1,11 +1,11 @@
 import trio
 from ..utils._http_util import *
 from .flask_test_server import *
+from h11 import Data, Response
 
 
 
-headers_dictionary = {'Content-Type': ' text/html; charset=utf-8', 'Content-Length': str(len(html)), 'Server': ' Werkzeug/0.14.1 Python/3.7.2', 'Date': ' Sun, 10 Feb 2019 10:54:32 GMT'}
-data = html
+headers_dictionary = {'content-type': 'text/html; charset=utf-8', 'content-length': str(len(html)), 'server': 'Werkzeug/0.14.1 Python/3.7.2', 'date': 'Sun, 10 Feb 2019 10:54:32 GMT'}
 
 
 def test_connect(start_server_thread):
@@ -17,57 +17,37 @@ def test_connect(start_server_thread):
 
 def test_http_response(start_server_thread):
     async def open_http_connection():
-        async with open_http_socket(host, port, ssl=False) as http_socket:
+        async with open_http_socket(host=host, ssl=False, port=port) as http_socket:
             response = await http_socket.request(path=path)
             assert type(response) is HTTPResponse
             assert response.data == html
-            assert response.code == status
+            assert response.code == status_code
     trio.run(open_http_connection)
 
 
 def test_parse_status_headers(start_server_thread):
     connection = HTTPConnection(host)
 
-    prepare_connection(connection, status_version=status_version, headers=headers_dictionary)
-    assert connection.response_state == READING_HEADERS
-    assert not connection.response.code
-    assert not connection.response.headers
+    prepare_connection(connection, status_code=status_code, headers=headers_dictionary, data=None)
+    assert connection.response.code
+    assert connection.response.headers
+    assert connection.response.headers == headers_dictionary
+    assert connection.response.code == status_code
     assert not connection.response.data
 
-    prepare_connection(connection, status_version=status_version, headers=headers_dictionary, data=data)
-    assert connection.response_state == DONE
+    prepare_connection(connection, status_code=status_code, headers=headers_dictionary, data=html)
     assert connection.response
     assert connection.response.headers == headers_dictionary
-    assert connection.response.code == status_version.split(" ")[1]
-    assert connection.response.data== data
-
-    prepare_connection(connection, status_version=status_version, data=data)
-    assert connection.response_state == DONE
-    assert connection.response
-    assert connection.response.headers != headers_dictionary
-    assert connection.response.code == status_version.split(" ")[1]
-    assert connection.response.data == ""
+    assert connection.response.code == status_code
+    assert connection.response.data == html
 
 
-def prepare_connection(connection, **args):
-    raw_response = prepare_raw_buffer_in(**args)
-    connection.response_state = READING_HEADERS
+def prepare_connection(connection, status_code, headers, data):
     connection.initialize_response_receival()
-    connection.buffer_in = raw_response
+    headers = connection.get_formatted_headers(headers)
+    connection.buffer_in.append(Response(status_code=status_code, headers=headers))
+    if data:
+        connection.buffer_in.append(Data(data=data.encode(connection.encoding)))
     connection.parse_response()
 
 
-def prepare_raw_buffer_in(status_version=None, headers=None, data=None):
-    raw_buffer_in = b""
-    if status_version:
-        raw_buffer_in = (status_version + HTTP_ONE_BLANK_LINE).encode(HTTPConnection.encoding)
-    if headers:
-        headers_string = ""
-        for key, value in headers.items():
-            headers_string += key + ":" + value + HTTP_ONE_BLANK_LINE
-        raw_buffer_in += headers_string.encode(HTTPConnection.encoding)
-    if data:
-        if status_version or headers:
-            raw_buffer_in += HTTP_ONE_BLANK_LINE.encode(HTTPConnection.encoding)
-        raw_buffer_in += data.encode(HTTPConnection.encoding)
-    return raw_buffer_in

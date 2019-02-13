@@ -4,10 +4,10 @@ from .flask_test_server import *
 from ..utils._data_structures import WebPage
 
 def test_downloader(start_server_thread):
-    trio.run(run_async_test_downloader)
+    trio.run(run_async_test_crawler)
 
 
-async def run_async_test_downloader():
+async def run_async_test_crawler():
     timeout = 5
     # open timeout
     with trio.move_on_after(timeout) as cancel:
