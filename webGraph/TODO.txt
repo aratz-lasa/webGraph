@@ -1,6 +1,8 @@
-TESTS
-    Completar test de creacion de web_page en GraphDB
-    Crear test para la creacion de relaciones
+tests
+    escribir tests de _dumper una vez codificado
 
-GraphDB
-    Crear metodo para crear relacion en GraphDB
+_dumper
+    escribir codigo
+
+_crawler
+    decidir que hacer cuando una url es el mismo host

@@ -30,7 +30,7 @@ class GraphDB:
     def delete_web_page_by_host(self, host):
         self._write_transaction(self._delete_web_page, host)
 
-    def exists_web_page(self, host):
+    def exists_web_page_by_host(self, host):
         return self._read_transaction(self._exists_web_page, host)
 
     def exists_link_relationship(self, from_host, to_host):

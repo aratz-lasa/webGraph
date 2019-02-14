@@ -1,11 +1,11 @@
 from ..utils._data_structures import HTTPRequest, get_name_from_host, \
-    get_path_from_url, get_host_from_url, uses_ssl_url
+    get_path_from_url, get_host_from_url, uses_ssl_url, remove_protocol_from_url
 url_with_ssl = "https://www.google.com/search"
 url_without_ssl = "http://www.google.com/search"
 host = "www.google.com"
 path = "/search"
 name = "google"
-
+url = host+path
 
 def test_load_from_url():
     ssl_request = HTTPRequest()
@@ -26,9 +26,10 @@ def test_get_host_from_url():
 def test_get_path_from_url():
     assert get_path_from_url(url_with_ssl) == path
 
-def test_uses_ssl_url():
-    assert uses_ssl_url(url_with_ssl)
-    assert not uses_ssl_url(url_without_ssl)
 
 def test_get_name_from_host():
     assert get_name_from_host(host) == name
+
+
+def test_remove_protocol_from_url():
+    assert remove_protocol_from_url(url_with_ssl) == url

@@ -12,7 +12,7 @@ def test_graph_connection():
 def test_create_web_page():
     with open_graph() as graph:
         graph.create_web_page_by_host(web_page_host)
-        assert graph.exists_web_page(web_page_host)
+        assert graph.exists_web_page_by_host(web_page_host)
         clean_web_pages(graph, [web_page_host])
 
 
@@ -28,9 +28,9 @@ def test_create_link_relationship():
 def test_delete_web_page_by_host():
     with open_graph() as graph:
         graph.create_web_page_by_host(web_page_host)
-        assert graph.exists_web_page(web_page_host)
+        assert graph.exists_web_page_by_host(web_page_host)
         graph.delete_web_page_by_host(web_page_host)
-        assert not graph.exists_web_page(web_page_host)
+        assert not graph.exists_web_page_by_host(web_page_host)
 
 
 def clean_web_pages(graph, hosts):

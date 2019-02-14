@@ -8,6 +8,10 @@ class WebPage:
     html = attr.ib(default=None)
     links = attr.ib(default=attr.Factory(list))
 
+    @property
+    def url_without_protocol(self):
+        return self.host+self.path
+
 
 @attr.s(cmp=False, hash=False, repr=False)
 class HTTPResponse:
@@ -35,14 +39,22 @@ def get_host_from_url(url):
 
 def get_path_from_url(url):
     host = url.split("://")[-1]
-    return "/" + host.split("/", 1)[-1]
-
-
-def uses_ssl_url(url):
-    return not re.match("http:.*", url)
+    host_and_path = host.split("/", 1)
+    path = "/"
+    if len(host_and_path) == 2:
+        path += host_and_path[1]
+    return path
 
 
 def get_name_from_host(host):
     if not re.search("\.", host):
         return host
     return "".join(host.split(".")[-2])
+
+
+def uses_ssl_url(url):
+    return not re.match("http:.*", url)
+
+
+def remove_protocol_from_url(url):
+    return url.split("://")[-1]
