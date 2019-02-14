@@ -32,6 +32,12 @@ class HTTPRequest:
         self.path = get_path_from_url(url)
         self.ssl = uses_ssl_url(url)
 
+    @property
+    def url(self):
+        if self.ssl:
+            return "https://" + self.host + self.path
+        return "http://" + self.host + self.path
+
 
 def get_host_from_url(url):
     return url.split("://")[-1].split("/")[0]
