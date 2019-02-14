@@ -13,7 +13,7 @@ def test_db_connection():
 def test_dump_links():
     link_host = get_host_from_url(link_url)
     with open_db() as db:
-        web_page = WebPage(host=web_page_host, path=web_page_path, links=[link_host])
+        web_page = WebPage(host=web_page_host, path=web_page_path, links=[link_url])
         db.dump_links(web_page)
         assert db.graph.exists_link_relationship(web_page.host, link_host)
         assert db.set_store.exists_url(web_page.url_without_protocol)

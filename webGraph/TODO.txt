@@ -1,8 +1,4 @@
 tests
-    escribir tests de _dumper una vez codificado
+    escribir tests de dumper_downloader, crawler_dumper y downloader_crawler_dumper una vez codificado
 
-_dumper
-    escribir codigo
 
-_crawler
-    decidir que hacer cuando una url es el mismo host

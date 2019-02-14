@@ -3,6 +3,7 @@ from .._downloader import downloader
 from .flask_test_server import *
 from ..utils._data_structures import WebPage, HTTPRequest
 
+
 def test_downloader(start_server_thread):
     trio.run(run_async_test_downloader)
 
