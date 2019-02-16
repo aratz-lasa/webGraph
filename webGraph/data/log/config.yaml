@@ -20,7 +20,7 @@ handlers:
         class: logging.handlers.RotatingFileHandler
         level: INFO
         formatter: simple
-        filename: info.log
+        filename: webGraph/data/log/info.log
         maxBytes: 10485760 # 10MB
         backupCount: 20
         encoding: utf8
@@ -29,7 +29,7 @@ handlers:
         class: logging.handlers.RotatingFileHandler
         level: ERROR
         formatter: simple
-        filename: errors.log
+        filename: webGraph/data/log/errors.log
         maxBytes: 10485760 # 10MB
         backupCount: 20
         encoding: utf8
