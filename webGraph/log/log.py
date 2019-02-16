@@ -1,4 +1,4 @@
 import logging
+import os
 
-
-logger = logging.getLogger("WebGraph")
+logger = logging.getLogger(os.path.basename(os.getcwd()))
