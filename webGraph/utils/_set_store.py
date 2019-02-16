@@ -17,11 +17,11 @@ class SetStoreDB:
         self._driver = redis.Redis(host=SET_STORE_URL, port=SET_STORE_PORT, db=0)
         self.set_name = "studied_urls"
 
-    def add_url(self, url):
-        self._driver.sadd(self.set_name, url)
+    def add_short_uri(self, short_uri):
+        self._driver.sadd(self.set_name, short_uri.short_uri)
 
-    def delete_url(self, url):
-        self._driver.srem(self.set_name, url)
+    def delete_short_uri(self, short_uri):
+        self._driver.srem(self.set_name, short_uri.short_uri)
 
-    def exists_url(self, url):
-        return self._driver.sismember(self.set_name, url)
+    def exists_short_uri(self, short_uri):
+        return self._driver.sismember(self.set_name, short_uri.short_uri)

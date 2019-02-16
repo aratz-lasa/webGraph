@@ -1,16 +1,16 @@
 from bs4 import BeautifulSoup as bs
 from ..utils._crawler_util import CrawlerUtil
-from ..utils._data_structures import WebPage
+from ..utils._data_structures import WebPage, Url
 from .flask_test_server import *
 
 
 def test_crawler_put_urls_to_link():
-    crawler_util, web_page = CrawlerUtil(), WebPage()
+    crawler_util, web_page = CrawlerUtil(), WebPage(url=url)
     crawler_util.web_page = web_page
     crawler_util.absolute_urls = absolute_urls
     assert not web_page.links
-    crawler_util.put_urls_to_web_page_related_links()
-    assert crawler_util.absolute_urls == web_page.links
+    crawler_util.prepare_put_links_to_web_page()
+    assert set(crawler_util.absolute_urls) == set(web_page.links)
 
 
 def test_crawler_filter_urls():
@@ -20,23 +20,15 @@ def test_crawler_filter_urls():
     assert crawler_util.absolute_urls == absolute_urls
 
 
-def test_extract_urls():
-    crawler_util = CrawlerUtil()
-    crawler_util.soup = bs(html, "html.parser")
-    crawler_util.extract_urls()
-    assert set(crawler_util.buffer_urls) == set(urls)
-
-
 def test_analyze_soup():
     crawler_util = CrawlerUtil()
     crawler_util.soup = bs(html, "html.parser")
     crawler_util.analyze_soup()
     assert set(crawler_util.buffer_urls) == set(urls)
-    assert set(crawler_util.absolute_urls) == set(absolute_urls)
 
 
 def test_create_soup():
-    crawler_util, web_page = CrawlerUtil(), WebPage(html=html)
+    crawler_util, web_page = CrawlerUtil(), WebPage(url=url, html=html)
     crawler_util.web_page = web_page
     soup = bs(html, "html.parser")
     crawler_util.create_soup()
@@ -44,6 +36,6 @@ def test_create_soup():
 
 
 def test_fill_with_links():
-    crawler_util, web_page = CrawlerUtil(), WebPage(html=html)
+    crawler_util, web_page = CrawlerUtil(), WebPage(url=url, html=html)
     crawler_util.fill_links(web_page)
-    assert set(web_page.links) == set(absolute_urls)
+    assert set(web_page.links) == set(map(lambda x: Url(x), absolute_urls))

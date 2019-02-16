@@ -1,6 +1,7 @@
 import attr
 import re
 from ._http_util import HTTP_URL_REGEX
+from ._data_structures import Url
 
 from bs4 import BeautifulSoup as bs
 
@@ -15,7 +16,7 @@ class CrawlerUtil:
         self.web_page = web_page
         self.create_soup()
         self.analyze_soup()
-        self.put_urls_to_web_page_related_links()
+        self.prepare_put_links_to_web_page()
         self.reset()
 
     def create_soup(self):
@@ -23,14 +24,21 @@ class CrawlerUtil:
 
     def analyze_soup(self):
         self.extract_urls()
-        self.filter_urls()
 
-    def put_urls_to_web_page_related_links(self):
+    def prepare_put_links_to_web_page(self):
+        self.filter_urls()
+        self.cast_urls()
         self.web_page.links = self.absolute_urls[:]
 
     def extract_urls(self):
         for link in self.soup.find_all('a'):
             self.buffer_urls.append(link.get('href'))
+
+    def cast_urls(self):
+        buffer_urls = []
+        for url in self.absolute_urls:
+            buffer_urls.append(Url(url))
+        self.absolute_urls = buffer_urls
 
     def filter_urls(self):
         for url in self.buffer_urls:

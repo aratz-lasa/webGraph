@@ -1,4 +1,3 @@
-tests
-    escribir tests de dumper_downloader, crawler_dumper y downloader_crawler_dumper una vez codificado
-
-
+_data_structures
+    Aplicar las nuevas estructuras de datos
+        El ultimo cambiado test_crawler_util

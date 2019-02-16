@@ -3,7 +3,7 @@ import trio
 from .flask_test_server import *
 from .._downloader import downloader
 from .._crawler import crawler
-from ..utils._data_structures import WebPage, HTTPRequest
+from ..utils._data_structures import WebPage, Url
 
 def test_downloader(start_server_thread):
     trio.run(run_async_test_downloader_crawler)
@@ -26,7 +26,8 @@ async def run_async_test_downloader_crawler():
             nursery.start_soon(downloader, q1_read, q2_write)
             nursery.start_soon(crawler, q2_read, q3_write)
             # write HTTPRequest to queue1
-            request = HTTPRequest(host=host, port=port, path=path, ssl=ssl)
+            request = Url(url=url, port=port)
+            request.ssl = ssl
             await q1_write.send(request)
             # read WebPage from q3_read
             web_page = await q3_read.receive()
@@ -39,4 +40,4 @@ async def run_async_test_downloader_crawler():
     assert web_page.host == host
     assert web_page.path == path
     assert web_page.links
-    assert set(web_page.links) == set(absolute_urls)
+    assert set(web_page.links) == set(map(lambda x: Url(x), absolute_urls))

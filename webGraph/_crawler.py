@@ -1,6 +1,5 @@
 from .utils._crawler_util import CrawlerUtil
 
-
 async def crawler(read_queue, write_queue):
     crawler_util = CrawlerUtil()
     async with read_queue, write_queue:

@@ -17,51 +17,48 @@ class GraphDB:
 
     def init_db(self):
         self._driver = GraphDatabase.driver(GRAPH_URL, auth=(GRAPH_USER, GRAPH_PASSWORD))
-        # read from .env file the environment settings for neo4j
-        # connect to neo4j
 
-    def create_web_page_by_host(self, host):
-        self._write_transaction(self._create_web_page_by_host, host)
-        # write links
+    def create_short_uri_node(self, short_uri):
+        self._write_transaction(self._create_short_uri_by_host, short_uri.host)
 
-    def create_link_relationship(self, from_host, to_host):
-        self._write_transaction(self._create_link_relationship, from_host, to_host)
+    def create_link_relationship(self, from_short_uri, to_short_uri):
+        self._write_transaction(self._create_link_relationship_by_host, from_short_uri.host, to_short_uri.host)
 
-    def delete_web_page_by_host(self, host):
-        self._write_transaction(self._delete_web_page, host)
+    def delete_short_uri(self, short_uri):
+        self._write_transaction(self._delete_short_uri_by_host, short_uri.host)
 
-    def exists_web_page_by_host(self, host):
-        return self._read_transaction(self._exists_web_page, host)
+    def exists_short_uri(self, short_uri):
+        return self._read_transaction(self._exists_short_uri_by_host, short_uri.host)
 
-    def exists_link_relationship(self, from_host, to_host):
-        return self._read_transaction(self._exists_link_relationship, from_host, to_host)
+    def exists_link_relationship(self, from_short_uri, to_short_uri):
+        return self._read_transaction(self._exists_link_relationship_by_host, from_short_uri.host, to_short_uri.host)
 
-    def _create_web_page_by_host(self, tx, host):
+    def _create_short_uri_by_host(self, tx, host):
         # parameter host instead of web_page because it is also used for links
         tx.run(
             "CREATE (a:WebPage {name:$name, host: $host}) ",
             host=host, name=get_name_from_host(host)
         )
 
-    def _create_link_relationship(self, tx, from_host, to_host):
+    def _create_link_relationship_by_host(self, tx, from_host, to_host):
         tx.run(
             "MATCH(from), (to) where from.host=$from_host and to.host=$to_host CREATE (from)-[:LinksTo]->(to)",
             from_host=from_host, to_host=to_host
         )
 
-    def _delete_web_page(self, tx, host):
+    def _delete_short_uri_by_host(self, tx, host):
         tx.run(
             "MATCH(web_page) WHERE web_page.host=$host DETACH DELETE web_page",
             host=host
         )
 
-    def _exists_link_relationship(self, tx, from_host, to_host):
+    def _exists_link_relationship_by_host(self, tx, from_host, to_host):
         record = tx.run("MATCH (from:WebPage), (to:WebPage) WHERE from.host=$from_host "
                         "AND to.host=$to_host AND (from)-[:LinksTo]->(to) RETURN from, to",
                         from_host=from_host, to_host=to_host)
         return bool(record.value())  # record.value() returns a list with all matched nodes
 
-    def _exists_web_page(self, tx, host):
+    def _exists_short_uri_by_host(self, tx, host):
         record = tx.run("MATCH (web_page:WebPage) WHERE web_page.host = $host RETURN web_page", host=host)
         return bool(record.value()) # record.value() returns a list with all matched nodes
 

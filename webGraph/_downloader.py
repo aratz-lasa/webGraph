@@ -10,5 +10,5 @@ async def downloader(read_queue, write_queue):
             async with open_http_socket(host=request.host, ssl=request.ssl, port=request.port) as http_socket:
                 response = await http_socket.request(path=request.path)
                 if re.match(HTTP_OK_STATUS_REGEX, str(response.code)):
-                    webpage = WebPage(host=request.host, path=request.path, html=response.data)
-                    await write_queue.send(webpage)
+                    web_page = WebPage(url=request.url, html=response.data)
+                    await write_queue.send(web_page)

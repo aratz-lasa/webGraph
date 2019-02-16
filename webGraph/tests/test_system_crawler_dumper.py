@@ -3,7 +3,7 @@ import trio
 from .flask_test_server import *
 from .._dumper import dumper
 from .._crawler import crawler
-from ..utils._data_structures import WebPage, HTTPRequest, get_host_from_url, remove_protocol_from_url
+from ..utils._data_structures import WebPage, Url, get_host_from_url, remove_protocol_from_url
 from ..utils._db import open_db
 
 def test_downloader():
@@ -27,7 +27,7 @@ async def run_async_test_crawler_dumper():
             nursery.start_soon(crawler, q1_read, q2_write)
             nursery.start_soon(dumper, q2_read, q3_write)
             # write HTTPRequest to queue1
-            web_page = WebPage(host=host, html=html, path=path)
+            web_page = WebPage(url=url, html=html)
             await q1_write.send(web_page)
             # read WebPage from q3_read
             http_request1 = await q3_read.receive()
@@ -36,21 +36,19 @@ async def run_async_test_crawler_dumper():
             cancel.cancel()
 
     assert not exited
-    assert type(http_request1) is HTTPRequest
+    assert type(http_request1) is Url
     assert http_request1.url in set(absolute_urls)
 
-    assert type(http_request2) is HTTPRequest
+    assert type(http_request2) is Url
     assert http_request2.url in set(absolute_urls)
 
-    clean_databases_by_urls(absolute_urls + [web_page.url_without_protocol])
+    clean_databases_by_urls([http_request1, http_request2, web_page])
 
 def clean_databases_by_urls(urls):
     with open_db() as db:
         for url in urls:
-            host = get_host_from_url(url)
-            db.graph.delete_web_page_by_host(host)
-            assert not db.graph.exists_web_page_by_host(host)
+            db.graph.delete_short_uri(url)
+            assert not db.graph.exists_short_uri(url)
 
-            clean_url = remove_protocol_from_url(url)
-            db.set_store.delete_url(clean_url)
-            assert  not db.set_store.exists_url(clean_url)
+            db.set_store.delete_short_uri(url)
+            assert  not db.set_store.exists_short_uri(url)

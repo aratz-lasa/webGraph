@@ -7,6 +7,7 @@ from time import sleep
 host = "127.0.0.1"
 port = 8000
 path = "/"
+url = host + path
 ssl = False
 html = """
 <!DOCTYPE html>

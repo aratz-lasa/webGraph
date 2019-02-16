@@ -1,7 +1,7 @@
 import trio
 from .._downloader import downloader
 from .flask_test_server import *
-from ..utils._data_structures import WebPage, HTTPRequest
+from ..utils._data_structures import WebPage, Url
 
 
 def test_downloader(start_server_thread):
@@ -22,7 +22,8 @@ async def run_async_test_downloader():
             # start downloader fun
             nursery.start_soon(downloader, q1_read, q2_write)
             # write HTTPRequest to queue1
-            request = HTTPRequest(host=host, port=port, path=path, ssl=ssl)
+            request = Url(url=url, port=port)
+            request.ssl = ssl
             await q1_write.send(request)
             # read response from
             web_page = await q2_read.receive()
