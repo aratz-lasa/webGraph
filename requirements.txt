@@ -10,7 +10,7 @@ neobolt==1.7.4
 neotime==1.7.4
 outcome==1.0.0
 pytz==2018.9
-pyyaml==3.13
+pyyaml==4.2b4
 redis==3.1.0
 requests==2.21.0
 six==1.12.0
