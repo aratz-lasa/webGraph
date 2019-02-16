@@ -4,6 +4,7 @@ from ._graph import Neo4jDB
 from ._set_store import RedisDB
 from ..log.log import db_logger as logger
 
+
 class DB:
 
     def __init__(self):
