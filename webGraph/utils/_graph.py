@@ -14,9 +14,9 @@ GRAPH_URL = os.getenv("NEO4J_URL")
 class Neo4jDB(GraphABC):
 
     def __init__(self):
-        self.init_db()
+        self._init_db()
 
-    def init_db(self):
+    def _init_db(self):
         self._driver = GraphDatabase.driver(GRAPH_URL, auth=(GRAPH_USER, GRAPH_PASSWORD))
 
     def create_short_uri_node(self, short_uri):

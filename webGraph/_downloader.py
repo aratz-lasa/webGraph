@@ -1,5 +1,4 @@
 import re
-from socket import gaierror
 
 from .utils._http_util import open_http_socket, HTTP_OK_STATUS_REGEX
 from .utils._data_structures import WebPage

@@ -1,6 +1,5 @@
 from contextlib import contextmanager
 
-from ._data_structures import get_host_from_url, remove_protocol_from_url
 from ._graph import Neo4jDB
 from ._set_store import RedisDB
 from ..log.log import db_logger as logger
@@ -18,13 +17,14 @@ class DB:
         self.set_store = RedisDB()
 
     def dump_links(self, web_page):
-        if not self.graph.exists_short_uri_node(web_page):
-            self.graph.create_short_uri_node(web_page)
         for link in web_page.links:
+            if self.graph.exists_link_relationship(web_page, link):
+                continue
+            if not self.graph.exists_short_uri_node(web_page):
+                self.graph.create_short_uri_node(web_page)
             if not self.graph.exists_short_uri_node(link):
                 self.graph.create_short_uri_node(link)
-            if not self.graph.exists_link_relationship(web_page, link):
-                self.graph.create_link_relationship(web_page, link)
+            self.graph.create_link_relationship(web_page, link)
         self.set_store.add_short_uri_entry(web_page)
 
     def get_unstudied_urls(self, urls):

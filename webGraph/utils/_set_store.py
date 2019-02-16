@@ -13,6 +13,7 @@ class RedisDB(SetStoreABC):
 
     def __init__(self):
         self.init_db()
+        self.clean()
 
     def init_db(self):
         self._driver = redis.Redis(host=SET_STORE_URL, port=SET_STORE_PORT, db=0)
@@ -26,6 +27,9 @@ class RedisDB(SetStoreABC):
 
     def exists_short_uri_entry(self, short_uri):
         return self._driver.sismember(self.set_name, short_uri.short_uri)
+
+    def clean(self):
+        self._driver.flushall()
 
     def close(self):
         pass  # Redis does not need to exit

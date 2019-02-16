@@ -1,9 +1,11 @@
 import attr
 import re
-from ._http_util import HTTP_URL_REGEX
-from ._data_structures import Url
-
 from bs4 import BeautifulSoup as bs
+
+from ._http_util import ABSOLUTE_URL_REGEX, RELATIVE_ROOT_URL_REGEX
+from ._data_structures import Url
+from ..log.log import main_logger as logger
+
 
 @attr.s(repr=False, hash=False, cmp=False)
 class CrawlerUtil:
@@ -42,8 +44,16 @@ class CrawlerUtil:
 
     def filter_urls(self):
         for url in self.buffer_urls:
-            if url and re.match(HTTP_URL_REGEX, url):  # if it is None no append
+            if not url: # if it is None no append
+                continue
+            if re.match(ABSOLUTE_URL_REGEX, url):
                 self.absolute_urls.append(url)
+            elif re.match(RELATIVE_ROOT_URL_REGEX, url):
+                self.absolute_urls.append(self.web_page.host + url)
+                logger.debug("Transformed {} to {}".format(url, self.absolute_urls[-1]))
+            else:
+                self.absolute_urls.append(self.web_page.short_uri + url)
+                logger.debug("Transformed {} to {}".format(url, self.absolute_urls[-1]))
 
     def reset(self):
         self.absolute_urls.clear()

@@ -11,7 +11,8 @@ from ._exceptions import *
 
 # regex patterns
 HTTP_OK_STATUS_REGEX = "2.."
-HTTP_URL_REGEX = "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+ABSOLUTE_URL_REGEX = "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+RELATIVE_ROOT_URL_REGEX = "/.*"
 HTTP_HOST_INSIDE_URL_REGEX = "(?<=//)[^/]*(?=/)"
 
 # General constants

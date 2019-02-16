@@ -43,5 +43,9 @@ class SetStoreABC(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def clean(self):
+        pass
+
+    @abstractmethod
     def close(self):
         pass
