@@ -34,5 +34,5 @@ async def run_async_test_crawler():
     assert web_page.host == host
     assert web_page.path == path
     assert web_page.links
-    assert set(web_page.links) == set(map(lambda url: Url(url), absolute_urls))
+    assert set(web_page.links) == set(map(lambda url: Url(url), filtered_urls))
 

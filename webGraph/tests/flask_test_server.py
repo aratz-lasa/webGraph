@@ -28,9 +28,10 @@ status_code = 200
 
 # urls in the html
 incorrect_urls = ["www.google.com", "www.w3schools.com"]
+relative_urls = ["127.0.0.1/www.google.com", "127.0.0.1/www.w3schools.com"]
 absolute_urls = ["https://www.google.com/search", "https://www.w3schools.com/"]
 urls = absolute_urls + incorrect_urls
-
+filtered_urls = absolute_urls + relative_urls
 
 _server_thread = None
 _app = Flask(__name__)

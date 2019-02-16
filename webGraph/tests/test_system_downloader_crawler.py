@@ -40,4 +40,4 @@ async def run_async_test_downloader_crawler():
     assert web_page.host == host
     assert web_page.path == path
     assert web_page.links
-    assert set(web_page.links) == set(map(lambda x: Url(x), absolute_urls))
+    assert set(web_page.links) == set(map(lambda x: Url(x), filtered_urls))

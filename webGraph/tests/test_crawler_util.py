@@ -14,14 +14,16 @@ def test_crawler_put_urls_to_link():
 
 
 def test_crawler_filter_urls():
-    crawler_util = CrawlerUtil()
+    crawler_util, web_page = CrawlerUtil(), WebPage(url=url)
+    crawler_util.web_page = web_page
     crawler_util.buffer_urls = urls
     crawler_util.filter_urls()
-    assert crawler_util.absolute_urls == absolute_urls
+    assert crawler_util.absolute_urls == filtered_urls
 
 
 def test_analyze_soup():
-    crawler_util = CrawlerUtil()
+    crawler_util, web_page = CrawlerUtil(), WebPage(url=url)
+    crawler_util.web_page = web_page
     crawler_util.soup = bs(html, "html.parser")
     crawler_util.analyze_soup()
     assert set(crawler_util.buffer_urls) == set(urls)
@@ -38,4 +40,4 @@ def test_create_soup():
 def test_fill_with_links():
     crawler_util, web_page = CrawlerUtil(), WebPage(url=url, html=html)
     crawler_util.fill_links(web_page)
-    assert set(web_page.links) == set(map(lambda x: Url(x), absolute_urls))
+    assert set(web_page.links) == set(map(lambda x: Url(x), filtered_urls))

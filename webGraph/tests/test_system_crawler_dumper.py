@@ -32,17 +32,24 @@ async def run_async_test_crawler_dumper():
             # read WebPage from q3_read
             http_request1 = await q3_read.receive()
             http_request2 = await q3_read.receive()
+            http_request3 = await q3_read.receive()
+            http_request4 = await q3_read.receive()
             exited = False
             cancel.cancel()
 
     assert not exited
+    urls_set = set(map(lambda x: Url(x).url,filtered_urls))
     assert type(http_request1) is Url
-    assert http_request1.url in set(absolute_urls)
-
+    assert http_request1.url in urls_set
     assert type(http_request2) is Url
-    assert http_request2.url in set(absolute_urls)
+    assert http_request2.url in urls_set
+    assert type(http_request3) is Url
+    assert http_request3.url in urls_set
+    assert type(http_request4) is Url
+    assert http_request4.url in urls_set
 
     clean_databases_by_urls([http_request1, http_request2, web_page])
+
 
 def clean_databases_by_urls(urls):
     with open_db() as db:
