@@ -47,8 +47,8 @@ async def run_async_test_crawler_dumper():
 def clean_databases_by_urls(urls):
     with open_db() as db:
         for url in urls:
-            db.graph.delete_short_uri(url)
-            assert not db.graph.exists_short_uri(url)
+            db.graph.delete_short_uri_node(url)
+            assert not db.graph.exists_short_uri_node(url)
 
-            db.set_store.delete_short_uri(url)
-            assert  not db.set_store.exists_short_uri(url)
+            db.set_store.delete_short_uri_entry(url)
+            assert  not db.set_store.exists_short_uri_entry(url)

@@ -44,8 +44,8 @@ async def run_async_test_downloader():
 def clean_up_dbs(graph_nodes, set_store_entries):
     with open_db() as db:
         for node in graph_nodes:
-            db.graph.delete_short_uri(node)
-            assert not db.graph.exists_short_uri(node)
+            db.graph.delete_short_uri_node(node)
+            assert not db.graph.exists_short_uri_node(node)
         for entry in set_store_entries:
-            db.set_store.delete_short_uri(entry)
-            assert not db.set_store.exists_short_uri(entry)
+            db.set_store.delete_short_uri_entry(entry)
+            assert not db.set_store.exists_short_uri_entry(entry)

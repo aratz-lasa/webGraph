@@ -2,6 +2,7 @@ from contextlib import contextmanager
 from neo4j import GraphDatabase
 import os
 
+from ._abc import GraphABC
 from ._data_structures import get_name_from_host
 from ..settings import settings # used for executing load_dotenv()
 
@@ -10,7 +11,7 @@ GRAPH_PASSWORD = os.getenv("NEO4J_PASSWORD")
 GRAPH_URL = os.getenv("NEO4J_URL")
 
 
-class GraphDB:
+class Neo4jDB(GraphABC):
 
     def __init__(self):
         self.init_db()
@@ -24,10 +25,10 @@ class GraphDB:
     def create_link_relationship(self, from_short_uri, to_short_uri):
         self._write_transaction(self._create_link_relationship_by_host, from_short_uri.host, to_short_uri.host)
 
-    def delete_short_uri(self, short_uri):
+    def delete_short_uri_node(self, short_uri):
         self._write_transaction(self._delete_short_uri_by_host, short_uri.host)
 
-    def exists_short_uri(self, short_uri):
+    def exists_short_uri_node(self, short_uri):
         return self._read_transaction(self._exists_short_uri_by_host, short_uri.host)
 
     def exists_link_relationship(self, from_short_uri, to_short_uri):
@@ -81,8 +82,8 @@ class GraphDB:
 
 
 @contextmanager
-def open_graph():
-    graph = GraphDB()
+def open_graph(GraphClass=Neo4jDB):
+    graph = GraphClass()
     try:
         yield graph
     finally:
