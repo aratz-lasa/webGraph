@@ -142,7 +142,11 @@ class HTTPConnection:
                 self.parse_data(part)
 
     def parse_data(self, data):
-        self.response.data += data.data.decode(self.encoding)
+        try:
+            self.response.data += data.data.decode(self.encoding)
+        except UnicodeDecodeError:
+            self.response.data += data.data.decode("ISO-8859-1")
+
 
     def parse_status_and_headers(self, response):
         self.response.code = response.status_code

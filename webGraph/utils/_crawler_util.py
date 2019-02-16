@@ -42,7 +42,7 @@ class CrawlerUtil:
 
     def filter_urls(self):
         for url in self.buffer_urls:
-            if re.match(HTTP_URL_REGEX, url):
+            if url and re.match(HTTP_URL_REGEX, url):  # if it is None no append
                 self.absolute_urls.append(url)
 
     def reset(self):
