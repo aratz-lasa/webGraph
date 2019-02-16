@@ -25,7 +25,6 @@ class RedisDB(SetStoreABC):
         self._driver.srem(self.set_name, short_uri.short_uri)
 
     def exists_short_uri_entry(self, short_uri):
-
         return self._driver.sismember(self.set_name, short_uri.short_uri)
 
     def close(self):

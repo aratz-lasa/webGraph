@@ -1,4 +1,6 @@
 import logging
 import os
 
-logger = logging.getLogger(os.path.basename(os.getcwd()))
+
+main_logger = logging.getLogger(os.path.basename(os.getcwd()))
+db_logger = logging.getLogger("db")

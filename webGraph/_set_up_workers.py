@@ -2,19 +2,19 @@ import trio
 from ._downloader import downloader
 from ._crawler import crawler
 from ._dumper import dumper
+from math import inf
 
-
-async def set_up_workers(init_url, downloaders_num=1, crawlers_num=1, dumpers_num=1):
+async def set_up_workers(init_url, downloaders_num=2, crawlers_num=1, dumpers_num=1):
     # ensure at least one of each
     downloaders_num = max(1, downloaders_num)
     crawlers_num = max(1, crawlers_num)
     dumpers_num = max(1, dumpers_num)
     # create queue1
-    q1_write, q1_read = trio.open_memory_channel(0)
+    q1_write, q1_read = trio.open_memory_channel(inf)
     # create queue2
-    q2_write, q2_read = trio.open_memory_channel(0)
+    q2_write, q2_read = trio.open_memory_channel(inf)
     # create queue3
-    q3_write, q3_read = trio.open_memory_channel(0)
+    q3_write, q3_read = trio.open_memory_channel(inf)
 
     async with trio.open_nursery() as nursery:
         for _ in range(downloaders_num):

@@ -1,11 +1,11 @@
+from contextlib import contextmanager
+
 from ._data_structures import get_host_from_url, remove_protocol_from_url
 from ._graph import Neo4jDB
 from ._set_store import RedisDB
-from contextlib import contextmanager
+from ..log.log import db_logger as logger
 
 class DB:
-    graph = None
-    set_store = None
 
     def __init__(self):
         self._init_graph()
@@ -28,9 +28,11 @@ class DB:
         self.set_store.add_short_uri_entry(web_page)
 
     def get_unstudied_urls(self, urls):
+        logger.debug("Filtering unstudied urls...")
         unstudied_urls = []
         for url in urls:
             if not self.set_store.exists_short_uri_entry(url):
+                logger.debug("Added {} to unstudied urls".format(url.short_uri))
                 unstudied_urls.append(url)
         return unstudied_urls
 

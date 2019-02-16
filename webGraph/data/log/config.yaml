@@ -3,9 +3,14 @@ disable_existing_loggers: False
 formatters:
     simple:
         format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-
 handlers:
     console:
+        class: logging.StreamHandler
+        level: DEBUG
+        formatter: simple
+        stream: ext://sys.stdout
+
+    db_console:
         class: logging.StreamHandler
         level: DEBUG
         formatter: simple
@@ -33,4 +38,9 @@ loggers:
     webGraph:
         level: DEBUG
         handlers: [console]
+        propagate: no
+
+    db:
+        level: DEBUG
+        handlers: []
         propagate: no
