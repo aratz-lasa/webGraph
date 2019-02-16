@@ -1,3 +1,0 @@
-_data_structures
-    Aplicar las nuevas estructuras de datos
-        El ultimo cambiado test_crawler_util
