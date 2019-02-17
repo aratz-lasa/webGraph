@@ -1,13 +1,16 @@
 # webGraph
 **webGraph** analyzes recursively a web page and creates a graph map showing how it connects with other web pages.
 
-this project it is aimed to be **async**. It is built using [Trio](https://github.com/python-trio/trio). 
-The architecture is simple: there is a 
+This project it is fully **async**. It is built using [Trio](https://github.com/python-trio/trio). 
+
+These are system's main components: 
 * *Donwloader*: downloads the web pages' HTMLs.
 * *Crawler*: analyzes the html and extracts, filters, and tramsforms urls that links to.
 * *Dumper*: dumps the analyzed web page and the urls links them to, in a graph database. After dumping data, it also analyezes the urls in order to send it to *Downloader* for downloading it.
 
-webGraph uses a **MapReduce** model. *Downloader* executes mapping and *Crawler* reduces it. The three components are connected by queues in a circular architecture. The messages flow follows this path: *Downloader*-*Crawler*-*Dumper*-*Downloader*...
+These three parts are independent, they execute in separate coroutines. This gives the flexibility to adjust different number of workers for each component. For example, there can be 4 *Downloaders*, 1 *Crawler* and 2 *Dumpers*.
+
+webGraph uses a **MapReduce** model. *Downloader* executes mapping and *Crawler* reduces it. The three components are connected by queues in a circular architecture. The messages flow between them follows this order: *Downloader*-*Crawler*-*Dumper*-*Downloader*...
 
 ## Dependencies
 Python requirements are specied in *requirements.txt*.
