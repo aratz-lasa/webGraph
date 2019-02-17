@@ -10,19 +10,21 @@ The architecture is simple: there is a
 webGraph uses a **MapReduce** model. *Downloader* executes mapping and *Crawler* reduces it. The three components are connected by queues in a circular architecture. The messages flow follows this path: *Downloader*-*Crawler*-*Dumper*-*Downloader*...
 
 ## Dependencies
-In order this project to work there are two python-external depenedencies:
+Python requirements are specied in *requirements.txt*.
+
+There are two python-external depenedencies:
 1. [Neo4j](https://neo4j.com/download/)
 
 1. [Redis](https://redis.io/download)
 
-* Apart from installing and starting Neo4j, you also need to add the following environment variables to python:
+* Apart from installing and starting Neo4j and Redis, you also need to add the following environment variables to python:
     * NEO4J_USER=
     * NEO4J_PASSWORD=
     * NEO4J_URL=
     * REDIS_URL=
     * REDIS_PORT=
     
-This databases can be swapped by any other graph database and/or a set database. Inside *webGraph/utils/_abc.py* there are databases abstract classes. So in order to swap a database, you only need to implement those abstract classes.
+This databases can be swapped by any other graph database and/or a set database. Inside *webGraph/utils/_abc.py* there are the database abstract classes. So in order to swap a database, you only need to implement those abstract classes.
 ## Usage
 
 This is the way to analyze a web page using **webGraph**:
@@ -49,3 +51,6 @@ python -m webGraph.start_web_graph https://www.amazon.com/
 ```
 ![Wikipedia graph](images/AmazonGraph.png)
 [Wikipedia]
+
+## Testing
+In order to executing tests, you must install *dev_requirements.txt*
