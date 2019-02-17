@@ -50,7 +50,6 @@ python -m webGraph.start_web_graph https://en.wikipedia.org/wiki/Wikipedia
 python -m webGraph.start_web_graph https://www.amazon.com/
 ```
 ![Wikipedia graph](images/AmazonGraph.png)
-[Wikipedia]
 
 ## Testing
 In order to executing tests, you must install *dev_requirements.txt*
