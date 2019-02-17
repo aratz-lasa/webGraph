@@ -1,7 +1,7 @@
 # webGraph
 **webGraph** analyzes recursively a web page and creates a graph map showing how it connects with other web pages.
 
-This project it is fully **async**. It is built using [Trio](https://github.com/python-trio/trio). 
+This project is fully **async**. It is built using [Trio](https://github.com/python-trio/trio). 
 
 These are system's main components: 
 * *Donwloader*: downloads the web pages' HTMLs.
